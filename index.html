@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>یاری پێمبڵێ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Audio for button click sound -->
+    <audio id="clickSound" preload="auto">
+        <source src="audio/mpeg/click.m4a" type="audio/mp4">
+        <source src="audio/mpeg/click.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Audio for timer end (explosion) - User's Pixabay link -->
+    <audio id="timerEndSound" preload="auto" crossorigin="anonymous">
+        <source src="https://cdn.pixabay.com/audio/2025/10/24/audio_3cfb130bc2.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Page 1: Intro -->
+    <div id="page1" class="page active">
+        <div class="background-container">
+            <img id="bg1" src="bg1.png" alt="background">
+        </div>
+        <div class="content">
+            <div class="rotating-star">↺</div>
+        </div>
+    </div>
+
+    <!-- Page 2: Main Menu -->
+    <div id="page2" class="page">
+        <div class="background-container">
+            <img id="bg2" src="bg2.png" alt="background">
+        </div>
+        <button class="old-button refresh-btn" onclick="location.reload()">
+            <span class="button-text">↻ ڕیفرێش</span>
+        </button>
+        <div class="content menu-content">
+            <button class="old-button" onclick="goToPage(3)">
+                <span class="button-text">دەستپێکردن</span>
+            </button>
+            <button class="old-button" onclick="goToPage(5)">
+                <span class="button-text">ڕێکخستن</span>
+            </button>
+            <button class="old-button" onclick="goToPage(6)">
+                <span class="button-text">فێرکاری</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Page 3: Player Setup -->
+    <div id="page3" class="page">
+        <div class="background-container">
+            <img id="bg3" src="bg3.png" alt="background">
+        </div>
+        <button class="back-btn" onclick="goToPage(2)">→ گەڕانەوە</button>
+        <div class="content">
+            <h2 class="kurdish-font">ناوی یاریزانەکان</h2>
+            <div id="playersList">
+                <div class="player-input">
+                    <input type="text" class="kurdish-font player-name" placeholder="ناوی یاریزان ١" maxlength="20">
+                    <button class="remove-btn" onclick="removePlayer(this)">✕</button>
+                </div>
+                <div class="player-input">
+                    <input type="text" class="kurdish-font player-name" placeholder="ناوی یاریزان ٢" maxlength="20">
+                    <button class="remove-btn" onclick="removePlayer(this)">✕</button>
+                </div>
+            </div>
+            <button class="old-button" onclick="addPlayer()">
+                <span class="button-text">⊹ زیادکردن</span>
+            </button>
+            <button class="old-button" onclick="startGame()">
+                <span class="button-text">دەستپێکردن</span>
+            </button>
+            <p id="playerError" class="error-text kurdish-font"></p>
+        </div>
+    </div>
+
+    <!-- Page 4: Game -->
+    <div id="page4" class="page">
+        <div class="background-container">
+            <img id="bg4" src="bg4.png" alt="background">
+        </div>
+        <div class="game-header">
+            <div class="timer" id="gameTimer">٠١:٠٠</div>
+            <button class="settings-icon" onclick="pauseGame()">⚙︎</button>
+        </div>
+        <div class="content game-content">
+            <div id="currentPlayer" class="current-player kurdish-font"></div>
+            <div id="wordDisplay" class="word-display kurdish-font hidden-word">؟؟؟</div>
+            <div class="game-buttons">
+                <button id="revealBtn" class="old-button reveal-btn" onclick="revealWord()">
+                    <span class="button-text">𓁹 کەشف</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 5: Settings + Feedback + Social (Tab Design) -->
+    <div id="page5" class="page">
+        <div class="background-container">
+            <img id="bg5" src="bg5.png" alt="background">
+        </div>
+
+        <div class="page5-container">
+            <!-- Header with Close Button -->
+            <div class="page5-header">
+                <button class="close-btn page5-close" onclick="goToPage(2)">✕</button>
+                <h2 class="kurdish-font page5-title">ڕێکخستن</h2>
+            </div>
+
+            <!-- Tab Buttons (Navigation) -->
+            <div class="page5-tabs">
+                <button class="tab-btn active" onclick="showTab('settings')" id="tab-settings">
+                    <span class="tab-icon">⚙︎</span>
+                    <span class="tab-text kurdish-font">ڕێکخستن</span>
+                </button>
+                <button class="tab-btn" onclick="showTab('feedback')" id="tab-feedback">
+                    <span class="tab-icon">✉︎</span>
+                    <span class="tab-text kurdish-font">ڕاوبۆچوون</span>
+                </button>
+                <button class="tab-btn" onclick="showTab('social')" id="tab-social">
+                    <span class="tab-icon">✆</span>
+                    <span class="tab-text kurdish-font">سۆشیاڵ</span>
+                </button>
+            </div>
+
+            <!-- Tab Content Container -->
+            <div class="page5-content">
+
+                <!-- Tab 1: Settings -->
+                <div class="tab-panel active" id="panel-settings">
+                    <div class="tab-panel-inner">
+                        <div class="setting-item">
+                            <label class="kurdish-font">گرافیک:</label>
+                            <div class="graphics-options">
+                                <button class="old-button small-btn" onclick="setGraphics(144)">١٤٤</button>
+                                <button class="old-button small-btn" onclick="setGraphics(270)">٢٧٠</button>
+                                <button class="old-button small-btn" onclick="setGraphics(400)">٤٠٠</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <label class="kurdish-font">کاتی یاری (خوولەک):</label>
+                            <div class="time-options">
+                                <button class="old-button small-btn" onclick="setGameTime(1)">١</button>
+                                <button class="old-button small-btn" onclick="setGameTime(2)">٢</button>
+                                <button class="old-button small-btn" onclick="setGameTime(3)">٣</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <label class="kurdish-font">دەنگی دوگمەکان:</label>
+                            <button class="old-button toggle-btn" id="soundBtn" onclick="toggleSound()">
+                                <span class="button-text">✓ چالاکە</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Feedback -->
+                <div class="tab-panel" id="panel-feedback">
+                    <div class="tab-panel-inner">
+                        <div class="feedback-mini-form">
+                            <input type="text" id="feedbackName" class="kurdish-font feedback-mini-input" placeholder="ناوی سیانی" maxlength="30">
+                            <textarea id="feedbackMessage" class="kurdish-font feedback-mini-textarea" placeholder="نامەکەت بنووسە..." maxlength="300"></textarea>
+                            <button class="old-button feedback-mini-btn" onclick="submitFeedback()">
+                                <span class="button-text">➤ ناردن</span>
+                            </button>
+                            <div id="feedbackMiniError" class="feedback-mini-error kurdish-font"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hidden Telegram Config - تۆکن و چات ئایدی لێرە دابنێ -->
+                <div id="telegramConfig" data-token="8764957129:AAGsFlqs-QuOzwNoSd1fd7YSVkwUTddm24Y" data-chatid="5071160578" style="display:none;"></div>
+
+                <!-- Tab 3: Social Media -->
+                <div class="tab-panel" id="panel-social">
+                    <div class="tab-panel-inner">
+                        <div class="social-mini-list">
+                            <div class="social-mini-item">
+                                <span class="social-mini-icon">➣</span>
+                                <span class="social-mini-name kurdish-font">Telegram</span>
+                                <button class="old-button social-mini-btn" onclick="window.open('https://t.me/ShBlod')">
+                                    <span class="button-text">Join</span>
+                                </button>
+                            </div>
+
+                            <div class="social-mini-item">
+                                <span class="social-mini-icon">ꚠ</span>
+                                <span class="social-mini-name kurdish-font">TikTok</span>
+                                <button class="old-button social-mini-btn" onclick="window.open('https://www.tiktok.com/@shblood_it')">
+                                    <span class="button-text">Join</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 6: Tutorial with Custom Background -->
+    <div id="page6" class="page">
+        <div class="background-container">
+            <img id="bg6" src="bg6.png" alt="background">
+        </div>
+        <button class="close-btn page6-close" onclick="goToPage(2)">✕</button>
+        <div class="content page6-content">
+            <div class="page6-paper">
+                <h2 class="kurdish-font page6-title">فێرکاری</h2>
+                <div class="page6-text kurdish-font">
+                    <p>بەخێربێیت بۆ یاری پێمبڵێ</p>
+                    <p>ئەم یاریە دروستکراوە لەلایەن تیمی شابڵۆد</p>
+                    <p>دەستخۆشی لە کاک ئاری دەکەین</p>
+                    <p>کاک ئاری (ئەمیر خەلیل) ڕێزمان هەیە بۆی</p>
+                    <p>ئەم یاریەمان دروستکردووە بۆ خەڵک</p>
+                    <p>هیوادارین عاجس نەبیت</p>
+                    <p>چونکە تۆمان خۆشدەوێ کاک ئاری</p>
+                    <p>بژی ئاری گەیمینگ ✌︎︎</p>
+                    <p>------------------------</p>
+                    <p>یاساکان:</p>
+                    <p>١. ٢-٤ یاریزان دەبن</p>
+                    <p>٢. هەر یاریزانێک دەبێت وشە بڵێت</p>
+                    <p>٣. کات تەواو بوو ئەو تیمە دەدۆڕێت</p>
+                    <p>٤. نۆرەی تیمەکەی دیکە دێ</p>
+                    <p>٥. سێ یاری هەیە کە لە سێ وشە پێکهاتووە کە دەڵێ (منکێم بەزنجیرەیەک وشە) ئاوایە</p>
+                    <p>٦. لەم سێ یاریەیە دەکرێت لەم یاریەی ئێمە کە هەرسێ یاری دەکرێ لەیوتوبی ئاری گەیمینگ هەیە فێرکاری سەیربکەن</p>
+                    <p>٧. یاری پێمبڵێ لەم یاریەی ئۆنڵاینە کە پەرەپێدەری تیمی شابڵۆد ئەمانە لەخۆ دەگرێت کە ئەمانەن خەڵک شوێن ئاژەڵ هەڵسوکەوت ئەمانە.</p>
+<p>٨.نابێ یاریزان یارمەتی یاریزان بدات بەس بە ئاماژە دەبێ قسەکردن قەدەغەیە نابێ یەک وشە بڵێی تا کات تەواو دەبێ.
+                    <p>٩. بۆ یاری بەزنجیرەیەک وشە دەبێ یەک مۆبایل هەبێ هەر لە یوتوبی ئاری سەیربکەن فێرکاری دانراوە لەکۆتایی دەڵێین بژی ئاری گەیمینگ و کورد و کوردستان.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause Menu -->
+    <div id="pauseMenu" class="modal">
+        <div class="paper-bg modal-content">
+            <h2 class="kurdish-font">یاری وەستا</h2>
+            <button class="old-button" onclick="resumeGame()">
+                <span class="button-text">گەڕانەوە بۆ یاری</span>
+            </button>
+            <button class="old-button" onclick="restartGame()">
+                <span class="button-text">دووبارە یاری</span>
+            </button>
+            <button class="old-button" onclick="quitToPlayers()">
+                <span class="button-text">جێهێشتن</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOver" class="modal">
+        <div class="paper-bg modal-content orange-bg">
+            <h2 class="kurdish-font">کات تەواو بوو!</h2>
+            <div id="loserDisplay" class="loser-name kurdish-font"></div>
+            <div class="game-over-buttons">
+                <button class="old-button" onclick="restartGame()">
+                    <span class="button-text">دووبارە</span>
+                </button>
+                <button class="old-button" onclick="goToPage(2)">
+                    <span class="button-text">سەرەتا</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
